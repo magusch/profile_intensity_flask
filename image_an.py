@@ -20,6 +20,7 @@ def line_intensity(file):
 	filename=str(time.time())[4:10]+'.jpg'
 	# #bytes_image = io.BytesIO()
 	plt.savefig(file+ filename)
+	plt.close()
 	#plt.show()
 	return filename
 	#return intensity
