@@ -11,14 +11,15 @@ matplotlib.use('agg')
 
 def line_intensity(file):
 	image=io2.imread(file)
-	profile_rgb=measure.profile_line(image,[0,0],[len(image[:,0]),0], linewidth=len(image[0,:]))
+	horz=len(image[:,0])
+	vert=len(image[0,:])
+	profile_rgb=measure.profile_line(image,[int(horz/2), int(0.1*vert)],[int(horz/2), int(0.9*vert)], linewidth=int(0.8*horz))
 	
-	#print(q[250])
-	profile_intensity=profile_rgb[:,0]*0.2126+profile_rgb[:,1]*0.7152+profile_rgb[:,2]*0.0722
+	#profile_intensity=profile_rgb[:,0]*0.2126+profile_rgb[:,1]*0.7152+profile_rgb[:,2]*0.0722
+	profile_intensity=profile_rgb[:,0]+profile_rgb[:,1]+profile_rgb[:,2]
 	plt.plot(range(len(profile_intensity)),profile_intensity)
 	#plt.show()
 	filename=str(time.time())[4:10]+'.jpg'
-	# #bytes_image = io.BytesIO()
 	plt.savefig(file+ filename)
 	plt.close()
 	#plt.show()
