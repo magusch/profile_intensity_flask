@@ -15,12 +15,11 @@ def line_intensity(file):
 	
 	#print(q[250])
 	profile_intensity=profile_rgb[:,0]*0.2126+profile_rgb[:,1]*0.7152+profile_rgb[:,2]*0.0722
-	img=plt.plot(range(len(profile_intensity)),profile_intensity)
+	plt.plot(range(len(profile_intensity)),profile_intensity)
 	#plt.show()
 	filename=str(time.time())[4:10]+'.jpg'
 	# #bytes_image = io.BytesIO()
 	plt.savefig(file+ filename)
-	plt.close()
 	#plt.show()
 	return filename
 	#return intensity
