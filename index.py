@@ -17,8 +17,8 @@ app.config.update(
     # Flask-Dropzone config:
     DROPZONE_ALLOWED_FILE_TYPE='image',
     DROPZONE_MAX_FILE_SIZE=3,
-    DROPZONE_MAX_FILES=30,
-   	DROPZONE_REDIRECT_VIEW='completed'  # set redirect view
+    DROPZONE_MAX_FILES=1,
+       DROPZONE_REDIRECT_VIEW='completed'  # set redirect view
 )
 
 
@@ -37,29 +37,26 @@ def upload():
         #path=os.path.join(app.config['UPLOADED_PATH'], f.filename)
         path=os.path.join(app.config['UPLOADED_PATH'], secure_filename(f.filename))
         #path=url_for('static', filename=f.filename)
-        f.save(path)
+        #f.save(path)
 
-        filename=secure_filename(f.filename+line_intensity(path))
+        filename=secure_filename(f.filename+line_intensity(f,path))
         #filename=line_intensity(path)
         image_urls.append(filename)
         #return send_file(bytes_image,
                      # attachment_filename='plot.png',
+        
                      # mimetype='image/png')
-        #return render_template('output.html',image_urls=image_urls)
+        #return render_template('output.html',image=path)
         #return "uploading ..."
     return render_template('index.html')
 
 @app.route('/completed')
 def completed():
-	#path=os.path.join(app.config['UPLOADED_PATH'],image_urls[-1])#'uploads/' + image_urls[-1])
-	#print(path)
-	#path=os.path.join(app.config['UPLOADED_PATH'], image_urls[-1])
-	#path=image_urls[-1])
-	try:
-		path=url_for('static', filename='uploads/'+image_urls[-1])
-		return render_template('output.html', image=path)
-	except:
-		return redirect (url_for('upload'))
+    try:
+        path=url_for('static', filename='uploads/'+image_urls[-1])
+        return render_template('output.html', image=path)
+    except:
+        return redirect (url_for('upload'))
 
 
 

@@ -9,7 +9,7 @@ matplotlib.use('agg')
 
 
 
-def line_intensity(file):
+def line_intensity(file,path):
 	image=io2.imread(file)
 	horz=len(image[:,0])
 	vert=len(image[0,:])
@@ -20,7 +20,7 @@ def line_intensity(file):
 	print()
 	I=profile_intensity[int(0.55*len(profile_intensity)):].max()
 	I0=profile_intensity[:int(0.45*len(profile_intensity))].max()
-	IdI0=I/I0
+	IdI0=np.around(I/I0, 1) 
 	
 	plt.plot(range(len(profile_intensity)),profile_intensity)
 	plt.legend(['I/I0 = %s' %(IdI0)])
@@ -29,7 +29,7 @@ def line_intensity(file):
 	filename=str(time.time())[4:10]+'.jpg'
 	plt.xlabel('Pixel distance')
 	plt.ylabel('Pixel intensity')
-	plt.savefig(file+ filename)
+	plt.savefig(path+ filename)
 	plt.close()
 	#plt.show()
 	return filename
