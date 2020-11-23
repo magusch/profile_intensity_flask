@@ -1,14 +1,17 @@
 import os
 
-from flask import Flask, render_template, request,send_file, url_for,redirect
+from flask import Flask, render_template, request,send_file, url_for,redirect, session
 from flask_dropzone import Dropzone
 from werkzeug.utils import secure_filename
 
-from image_an import line_intensity
+from image_an import line_intensity,line_intensity2
+
+import json
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
+
 
 dropzone = Dropzone(app)
 
@@ -18,14 +21,15 @@ app.config.update(
     DROPZONE_ALLOWED_FILE_TYPE='image',
     DROPZONE_MAX_FILE_SIZE=3,
     DROPZONE_MAX_FILES=1,
-       DROPZONE_REDIRECT_VIEW='completed'  # set redirect view
+    DROPZONE_REDIRECT_VIEW='completed',  # set redirect view
+    DROPZONE_DEFAULT_MESSAGE='Загрузите ваше изображение'
 )
 
 
 # @app.route('/')
 # def hello_world():
 #     return 'Hello, World!'
-
+app.secret_key = b'_5#fdss"F4Q8z\n\xec]/'
 
 image_urls=[]
 
@@ -34,30 +38,31 @@ def upload():
 
     if request.method == 'POST':
         f = request.files.get('file')
-        #path=os.path.join(app.config['UPLOADED_PATH'], f.filename)
         path=os.path.join(app.config['UPLOADED_PATH'], secure_filename(f.filename))
-        #path=url_for('static', filename=f.filename)
-        #f.save(path)
+        f.save(path)
+        # if session.get('filename'):
+        #     try:
+        #         os.remove(session.get('filename'))
+        #     except:
+        #         pass
+        session['filename'] = path
 
-        filename=secure_filename(f.filename+line_intensity(f,path))
-        #filename=line_intensity(path)
-        image_urls.append(filename)
-        #return send_file(bytes_image,
-                     # attachment_filename='plot.png',
-        
-                     # mimetype='image/png')
-        #return render_template('output.html',image=path)
-        #return "uploading ..."
     return render_template('index.html')
+
+
 
 @app.route('/completed')
 def completed():
-    try:
-        path=url_for('static', filename='uploads/'+image_urls[-1])
-        return render_template('output.html', image=path)
-    except:
+    file=session.get('filename')
+    if file:
+        Y, IdI0 = line_intensity2(file)
+        X = list(range(len(Y)))
+        
+        filename = 'static/uploads/' + file.split('/')[-1] #change
+        #os.path.join(app.config['UPLOADED_PATH'], secure_filename(file))
+        return render_template('js_output.html', X=X, Y=list(Y), IdI0=IdI0, image=filename)
+    else:
         return redirect (url_for('upload'))
-
 
 
 if __name__ == '__main__':
