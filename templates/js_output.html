@@ -25,6 +25,15 @@
             max-width: 800px;
             width: 60%px;
         }
+        .unselectable {
+          -webkit-touch-callout: none; /* iOS Safari */
+          -webkit-user-select: none;   /* Chrome/Safari/Opera */
+          -khtml-user-select: none;    /* Konqueror */
+          -moz-user-select: none;      /* Firefox */
+          -ms-user-select: none;       /* Internet Explorer/Edge */
+          user-select: none;           /* Non-prefixed version, currently
+                                          not supported by any browser */
+        }
     </style>
 </head>
 
@@ -38,7 +47,7 @@
     <div class="formula">   I<sub>1</sub> / I<sub>0</sub> = <b id="IdI0">{{ (I_1_0[0]/I_1_0[1])|round(3)}} </b> </div>
 </p>
 <p>
-<div style="width:60%;">
+<div style="width:60%;" class="unselectable">
     <canvas id="overlay" style="position:absolute;pointer-events:none;"></canvas>
     <canvas id="myChart"></canvas>
 
