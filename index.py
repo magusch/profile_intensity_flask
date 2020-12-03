@@ -4,7 +4,7 @@ from flask import Flask, render_template, request,send_file, url_for,redirect, s
 from flask_dropzone import Dropzone
 from werkzeug.utils import secure_filename
 
-from image_an import line_intensity,line_intensity2
+from image_an import line_intensity
 
 import json
 
@@ -55,12 +55,12 @@ def upload():
 def completed():
     file=session.get('filename')
     if file:
-        Y, IdI0 = line_intensity2(file)
+        Y, I_1_0 = line_intensity(file)
         X = list(range(len(Y)))
         
         filename = 'static/uploads/' + file.split('/')[-1] #change
         #os.path.join(app.config['UPLOADED_PATH'], secure_filename(file))
-        return render_template('js_output.html', X=X, Y=list(Y), IdI0=IdI0, image=filename)
+        return render_template('js_output.html', X=X, Y=list(Y), I_1_0=I_1_0, image=filename)
     else:
         return redirect (url_for('upload'))
 
