@@ -1,15 +1,203 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Flask-Dropzone out</title>
+    <title>Profile Intensity // Plotting instensity</title>
+    <style type="text/css">
 
+        .formula {
+            font-family: Helvetica, Verdana, sans-serif; 
+            font-size: 150%;
+            font-weight: light;
+            text-align: left;
+            margin-left: 100px;
+            color: #1F1F1F;
+
+
+        }
+
+        .unselectable {
+          -webkit-touch-callout: none; /* iOS Safari */
+          -webkit-user-select: none;   /* Chrome/Safari/Opera */
+          -khtml-user-select: none;    /* Konqueror */
+          -moz-user-select: none;      /* Firefox */
+          -ms-user-select: none;       /* Internet Explorer/Edge */
+          user-select: none;           /* Non-prefixed version, currently
+                                          not supported by any browser */
+        }
+    </style>
 </head>
-<body>
-  <b>Hello</b><p>
 
-  <img src="{{ image }}"><p>
-  Профиль интенсивности
-  <a href="{{url_for('upload')}} "><h1>Назад</h1> </a>
+<body class="unselectable">
+
+<a href="{{ url_for('index') }}"><div class="formula"><b>Назад</b></div></a>
+<p>
+    Выделите <b id='choose'> область I<sub>0</sub></b>
+</p>
+<p>
+    <div class="formula">   I<sub>1</sub> / I<sub>0</sub> = <b id="IdI0">{{ (I_1_0[0]/I_1_0[1])|round(3)}} </b> </div>
+</p>
+<p>
+<div>
+    <canvas id="overlay" style="position:absolute;pointer-events:none;"></canvas>
+   <canvas id="myChart"></canvas>
+
+</div>
+<p>
+
+   <!--  <p id="First">1</p>
+    <p id="Second">2</p>
+
+ <button onclick='document.getElementById("First").innerHTML =5'>QQQ </button>-->
+
+
+<p>
+
+
 </body>
-</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
+
+
+    <script>
+
+
+var frst = 0;
+var i0 = {{I_1_0[1]}};
+var i1 = {{I_1_0[0]}}; //TODO: change to I1
+choose_list = ['область I<sub>0</sub>', 'область I<sub>1</sub>']
+
+colors = ['rgb(18,203,28)', 'rgb(243,150,10)', 'rgb(202,52,5)', 'rgb(203,18,151)', 'rgb(14,118,231)',
+    'rgb(14,231,170)','rgb(255,229,94)','rgb(236,106,167)']
+
+var opts = {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+        labels: {{X}},
+        datasets: [
+            {% for label, intensity in Y.items() %}
+                {
+                    label: '{{ label }}',
+                    borderColor: colors[{{loop.index-1 }}],
+                    pointRadius: 1,
+                    data: {{ intensity }},
+                    fill: false
+                },
+            {% endfor %}
+        ],
+    },
+
+    options: {
+            title: {
+                display: false,
+                text: 'Image Intensity Profile'
+            },
+            layout: {
+                        padding: {
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
+            scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Положение пикселя'
+                        }
+                    }],
+
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Интенсивность пикселя'
+                        }
+                    }]
+                },
+
+        }
+
+
+}
+var canvas = document.getElementById('myChart')
+var ctx = canvas.getContext('2d');
+var chart = new Chart(ctx, opts);
+
+var overlay = document.getElementById('overlay');
+var startIndex = 0;
+overlay.width = canvas.width;
+overlay.height = canvas.height;
+var selectionContext = overlay.getContext('2d');
+var selectionRect = {
+  w: 0,
+  startX: 0,
+  startY: 0
+};
+var drag = false;
+canvas.addEventListener('pointerdown', evt => {
+  const points = chart.getElementsAtEventForMode(evt, 'index', {
+    intersect: false
+  });
+  startIndex = points[0]._index;
+  const rect = canvas.getBoundingClientRect();
+  selectionRect.startX = evt.clientX - rect.left;
+  selectionRect.startY = chart.chartArea.top;
+  drag = true;
+  // save points[0]._index for filtering
+});
+canvas.addEventListener('pointermove', evt => {
+
+  const rect = canvas.getBoundingClientRect();
+  if (drag) {
+    const rect = canvas.getBoundingClientRect();
+    selectionRect.w = (evt.clientX - rect.left) - selectionRect.startX;
+    selectionContext.globalAlpha = 0.5;
+    selectionContext.clearRect(0, 0, canvas.width, canvas.height);
+    selectionContext.fillRect(selectionRect.startX,
+      selectionRect.startY,
+      selectionRect.w,
+      chart.chartArea.bottom - chart.chartArea.top);
+  } else {
+    selectionContext.clearRect(0, 0, canvas.width, canvas.height);
+    var x = evt.clientX - rect.left;
+    if (x > chart.chartArea.left) {
+      selectionContext.fillRect(x,
+        chart.chartArea.top,
+        1,
+        chart.chartArea.bottom - chart.chartArea.top);
+    }
+  }
+});
+canvas.addEventListener('pointerup', evt => {
+
+  const points = chart.getElementsAtEventForMode(evt, 'index', {
+    intersect: false
+  });
+  drag = false;
+  //console.log('implement filter between ' + options.data.labels[startIndex] + ' and ' + options.data.labels[points[0]._index]);
+
+  var end_index = points[0]._index //startIndex
+  var I_array = opts.data.datasets[0].data.slice(startIndex,end_index)
+
+  const I_Sum = (I_array.reduce((a, b) => a + b, 0))
+
+  var I_value = I_Sum/I_array.length;
+
+  if (frst==0) {
+    //document.getElementById("First").innerHTML = i1//opts.data.datasets[0].data[startIndex] + ' and ' + opts.data.datasets[0].data[points[0]._index]
+    i0 = I_value;
+    frst = 1;
+  } else if (frst==1){
+    //document.getElementById("Second").innerHTML = i0//opts.data.datasets[0].data[startIndex] + ' and ' + opts.data.datasets[0].data[points[0]._index];
+    frst = 0;
+    i1 = I_value;
+  };
+
+  document.getElementById("IdI0").innerHTML = (i1/i0).toFixed(4)
+  document.getElementById("choose").innerHTML = choose_list[frst];
+
+});
+</script>
