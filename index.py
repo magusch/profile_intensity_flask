@@ -8,16 +8,20 @@ from apps.image_an import line_intensity
 
 from apps.forms import UploadForm
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+
 
 app = Flask(__name__, static_folder="static")
 
 
 dropzone = Dropzone(app)
 
-app.config.update(
-    UPLOADED_PATH=os.path.join(basedir, 'static/uploads'),
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
+app.config.update(
+    UPLOAD_FOLDER=os.path.join(PROJECT_ROOT, 'uploads'),
+    UPLOAD_EXTENSIONS = ['.jpg', 'jpeg', '.png', '.gif'],
+    STATIC_FOLDER = 'static/',
+    STATICFILES_DIRS = (os.path.join(PROJECT_ROOT, "static")),
     # # Flask-Dropzone config:
     # DROPZONE_ALLOWED_FILE_TYPE='image',
     # DROPZONE_MAX_FILE_SIZE=3,
@@ -26,17 +30,17 @@ app.config.update(
     # DROPZONE_DEFAULT_MESSAGE='Загрузите ваше изображение'
 )
 
-UPLOAD_FOLDER = os.path.join(basedir, 'static/uploads')
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['STATIC_FOLDER'] = 'static/'
-PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
-app.config['STATICFILES_DIRS'] = (os.path.join(PROJECT_ROOT, "static"))
+# UPLOAD_FOLDER = os.path.join(basedir, 'uploads')
+# ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+# #app.config['UPLOAD_EXTENSIONS'] = ['.jpg', 'jpeg', '.png', '.gif']
+# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# app.config['STATIC_FOLDER'] = 'static/'
+#
+# app.config['STATICFILES_DIRS'] = (os.path.join(PROJECT_ROOT, "static"))
 
 
 app.secret_key = b'_5#fwwdss"F4Q8z\n\xec]/'
 
-image_urls=[]
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -47,7 +51,7 @@ def index():
 
     if request.method == 'POST':
         f = request.files.get('file')
-        path = os.path.join(app.config['UPLOADED_PATH'], secure_filename(f.filename))
+        path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename))
         f.save(path)
         # if session.get('filename'):
         #     try:
@@ -70,7 +74,7 @@ def index_forms():
             if not f: continue
             filename = secure_filename(f.filename)
 
-            path = os.path.join(app.config['UPLOADED_PATH'], filename)
+            path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             f.save(path)
             session['datas'].append({'filename':path, 'samplename':samplename})
         return redirect(url_for('completed'))
@@ -86,17 +90,19 @@ def completed():
     if datas:
         intensities = {}
         pixels = {}
+        I1_I0 = {}
         for data in datas:
             samplename = data['samplename']
             file = data['filename']
-            Y, I_1_0 = line_intensity(file)
+            Y, I1_I0[samplename] = line_intensity(file)
             intensities[samplename] = list(Y)
+
             #pixels[samplename] \
             X = (list(range(len(Y))))
 
             #filename = 'static/uploads/' + file.split('/')[-1] #change
             #os.path.join(app.config['UPLOADED_PATH'], secure_filename(file))
-        return render_template('output.html', X=X, Y=intensities, I_1_0=I_1_0)
+        return render_template('output.html', X=X, Y=intensities, I1_I0=I1_I0)
     else:
         return redirect (url_for('index_forms'))
 
