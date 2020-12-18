@@ -17,9 +17,9 @@ def line_intensity(file):
 	#IdI0=np.around(I/I0, 2)
 	#I_1_0 = [I, I0]
 	if I>I0:
-		I_1_0='+'
+		I_1_0='✅'
 	else:
-		I_1_0='–'
+		I_1_0='⛔️'
 
 	return (profile_intensity, I_1_0)
 

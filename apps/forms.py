@@ -5,6 +5,4 @@ from flask_wtf.file import FileField, FileAllowed
 
 class UploadForm(FlaskForm):
     samplename = StringField('Название образца', default='Образец')
-    filename = FileField(label='Изображение', validators=[
-        FileAllowed(['jpg', 'png', 'gif'], 'Images only!')
-    ])
+    filename = FileField(label='Изображение')

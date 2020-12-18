@@ -31,7 +31,7 @@ app.config.update(
 )
 
 # UPLOAD_FOLDER = os.path.join(basedir, 'uploads')
-# ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 # #app.config['UPLOAD_EXTENSIONS'] = ['.jpg', 'jpeg', '.png', '.gif']
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # app.config['STATIC_FOLDER'] = 'static/'
@@ -66,12 +66,13 @@ def index():
 def index_forms():
     forms = [UploadForm(prefix="form%s" %(i)) for i in range(5)]
 
-    if forms[0].validate_on_submit():
+    if request.method == 'POST':
         session['datas'] =[]
         for form in forms:
             samplename = form.data['samplename']
             f = form.data['filename']
-            if not f: continue
+            if (not f) or (not allowed_file(f.filename)): continue
+            #if not allowed_file(f.filename): continue
             filename = secure_filename(f.filename)
 
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)

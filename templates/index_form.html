@@ -102,7 +102,7 @@
      <p><label> Название образца: </label> {{ form.samplename(class_='str_field %s'%(loop.index), id='name_%s'%(loop.index), value='Номер %s'%(loop.index)) }}
          <label for="upl {{ loop.index }}" class="fake_button {{ loop.index }}" id="fake_button{{ loop.index }}"> Загрузить</label>{{ form.filename(class_='custom-file-upload', id='upl %s' %(loop.index))}}
 
-     <script>
+<script>
     $('#fake_button{{ loop.index }}').click(function(){
         $( "label.fake_button.{{ loop.index }}" ).html('Файл {{ loop.index }}');
 });
@@ -115,5 +115,10 @@
 <p><button id="submit" name="submit" type="submit" class="button_submit" >Запустить</button></p>
 </form></p>
 
+<script>
+    $('#submit').click(function(){
+        $( "button.button_submit" ).html('Загрузка....');
+});
+</script>
 </body>
 </html>
