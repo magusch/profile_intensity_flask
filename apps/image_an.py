@@ -16,10 +16,13 @@ def line_intensity(file):
 	I0=profile_intensity[:int(0.45*len(profile_intensity))].max()
 	#IdI0=np.around(I/I0, 2)
 	#I_1_0 = [I, I0]
-	if I>I0:
-		I_1_0='✅'
-	else:
-		I_1_0='⛔️'
+
+	# if I>I0:
+	# 	I_1_0='✅'
+	# else:
+	# 	I_1_0='⛔️'
+
+	I_1_0 = round(I/I0,2)
 
 	return (profile_intensity, I_1_0)
 

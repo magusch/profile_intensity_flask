@@ -22,12 +22,7 @@ app.config.update(
     UPLOAD_EXTENSIONS = ['.jpg', 'jpeg', '.png', '.gif'],
     STATIC_FOLDER = 'static/',
     STATICFILES_DIRS = (os.path.join(PROJECT_ROOT, "static")),
-    # # Flask-Dropzone config:
-    # DROPZONE_ALLOWED_FILE_TYPE='image',
-    # DROPZONE_MAX_FILE_SIZE=3,
-    # DROPZONE_MAX_FILES=1,
-    # DROPZONE_REDIRECT_VIEW='completed',  # set redirect view
-    # DROPZONE_DEFAULT_MESSAGE='Загрузите ваше изображение'
+
 )
 
 # UPLOAD_FOLDER = os.path.join(basedir, 'uploads')
@@ -48,7 +43,6 @@ def allowed_file(filename):
 
 @app.route('/index', methods=['GET', 'POST'])
 def index():
-
     if request.method == 'POST':
         f = request.files.get('file')
         path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename))
@@ -80,7 +74,7 @@ def index_forms():
             session['datas'].append({'filename':path, 'samplename':samplename})
         return redirect(url_for('completed'))
 
-    return render_template('index_form.html', forms=forms)
+    return render_template('index_upload.html', forms=forms)
 
 
 
