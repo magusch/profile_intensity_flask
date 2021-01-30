@@ -1,0 +1,66 @@
+111<canvas id="myChart"></canvas>Hello
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+<script>
+var ctx = document.getElementById('myChart').getContext('2d');
+var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+        labels: [2,5],
+        datasets: [{
+            label: 'My First dataset',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: [10,15]
+        }]
+    },
+
+    // Configuration options go here
+    options: {}
+});
+</script>
+<br><p>
+Second
+<p>
+    <script>
+var ctx = document.getElementById('myChart').getContext('2d');
+
+function generateData() {
+            var data = [];
+            {% for y in Y %}
+            data.push({
+                    x: {{ X[loop.index-1] }},
+                    y: {{y}}
+                });
+
+            {% endfor %}
+                
+            
+            return data;
+        }
+
+var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+        labels: {{ X }},
+        datasets: [{
+            label: 'My Second dataset',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: generateData()
+
+
+            
+        }]
+    },
+
+    // Configuration options go here
+    options: {}
+});
+</script>

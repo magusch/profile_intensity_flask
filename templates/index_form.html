@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile Intensity // Upload Image</title>
+
+    <style type="text/css">
+        body {
+            font-family: "Courier";
+            font-size: 1em;
+            color: #1a346d;
+        }
+
+        .header {
+            text-align: center;
+            font-size: 1.4em;
+            font-family: "Courier";
+            font-weight: bold;
+        }
+
+        .form {
+            text-align: center;
+            font-size:0.9em;
+            margin-top: 45px;
+
+        }
+        .form label {
+            margin-left: 35px;
+            font-size: 1.3em;
+            font-weight: bolder;
+
+        }
+        .fake_button {
+            background-color: #ee8c46;
+            border-radius: 5px;
+            position: relative;
+            height: 30px;
+            width: 12%;
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            margin: 25px;
+            padding: 15px 25px;
+            z-index: 2;
+        }
+        .fake_button:hover {
+            background-color: #f56c0f;
+            box-shadow: 0 12px 16px 0 rgba(210, 210, 210, 0.24), 0 17px 50px 0 rgba(152, 152, 152, 0.19);
+        }
+        .button_submit {
+            background-color: #4684ee;
+            border-radius: 8px;
+            font-size: 1.5em;
+            text-align: center;
+            padding: 15px 25px;
+            height: 70px;
+            width: 20%;
+            color: #f3f0ed;
+        }
+
+        .button_submit:hover {
+            background-color: #0f35f5;
+            box-shadow: 0 15px 16px 0 rgba(210, 210, 210, 0.24), 0 17px 50px 0 rgba(152, 152, 152, 0.19);
+        }
+
+        .str_field {
+                width: 25%;
+                position: static;
+              padding: 15px 25px;
+                font-size: 1.3em;
+            border-radius: 5px;
+            margin: 17px;
+            margin-bottom: 27px;
+
+
+        }
+
+        .custom-file-upload {
+            position: relative;
+            "margin-left: -95px;"
+            z-index: 1;
+            height: 30px;
+            cursor: pointer;
+            display:none;
+
+        }
+
+    </style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+
+</head>
+<body>
+<div class="header">
+    <tr><td>Измерительный прибор «Хемилюминометр»</td><td><img align="center" width="25%" src="{{ url_for('static',filename='image/itmo_logo.png')}}"></td></tr>
+
+</div>
+<p class="hid" >Прибор позволяет измерять хемилюминесценцию образцов и давать ответ</p>
+ <button class="hid_but">Начать</button>
+<p>
+ <form action="" method="post" class="form" enctype="multipart/form-data">
+     {% for form in forms %}
+        {{ form.hidden_tag() }}
+
+         <div class="hid_obj_{{ loop.index }}" hidden="true">
+            <label> Название образца: </label>
+                {{ form.samplename(class_='str_field %s'%(loop.index), id='name_%s'%(loop.index), value='Номер %s'%(loop.index)) }}
+
+            <label for="upl {{ loop.index }}" class="fake_button {{ loop.index }}" id="fake_button{{ loop.index }}"> Загрузить</label>{{ form.filename(class_='custom-file-upload', id='upl %s' %(loop.index))}}
+            <a class="hid_but_{{ loop.index }}">Hey</a>
+         </div>
+        <script>
+            $('#fake_button{{ loop.index }}').click(function(){
+                $( "label.fake_button.{{ loop.index }}" ).html('Файл {{ loop.index }}');
+        });
+            $('#name_{{ loop.index }}').click(function(){
+                $( "input.str_field.{{ loop.index }}" ).val('');
+        });
+            $('.hid_but_{{ loop.index }}').click(function(){
+             $('.hid_obj_{{ loop.index+1 }}').show();
+        });
+        </script>
+
+     {% endfor %}
+<p><button id="submit" name="submit" type="submit" class="button_submit" >Запустить</button></p>
+</form></p>
+
+<script>
+    $('#submit').click(function(){
+        $( "button.button_submit" ).html('Загрузка....');
+});
+$('.hid_but').click(function(){
+             $('.hid_obj_1').show();
+        });
+
+</script>
+</body>
+</html>

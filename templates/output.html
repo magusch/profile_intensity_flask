@@ -1,15 +1,184 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Flask-Dropzone out</title>
+{% extends "index.html" %}
+{% block content %}
 
+    <title>Profile Intensity // Plotting instensity</title>
+    <style type="text/css">
+        body {
+            font-family: Helvetica, Verdana, sans-serif;
+        }
+        .formula {
+
+            font-size: 150%;
+            font-weight: light;
+            text-align: left;
+            margin-left: 100px;
+            color: #1F1F1F;
+        }
+
+        .unselectable {
+          -webkit-touch-callout: none; /* iOS Safari */
+          -webkit-user-select: none;   /* Chrome/Safari/Opera */
+          -khtml-user-select: none;    /* Konqueror */
+          -moz-user-select: none;      /* Firefox */
+          -ms-user-select: none;       /* Internet Explorer/Edge */
+          user-select: none;           /* Non-prefixed version, currently
+                                          not supported by any browser */
+        }
+        .answers {
+            font-size: 1.8em;
+            text-align: center;
+            margin: 5px;
+            color: #2851a7;
+        }
+        .button_back {
+            background-color: #3a5aab;
+            font-family: Helvetica;
+            border-radius: 10px;
+            font-size: 1.3em;
+            color: #ffffff;
+            text-align: left;
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            padding: 10px 25px;
+            margin-left: 10px;
+            margin-bottom: 15px;
+
+        }
+        .button_back:hover {
+            background-color: #2851a7;
+            box-shadow: 0 12px 16px 0 rgba(210, 210, 210, 0.24), 0 17px 50px 0 rgba(152, 152, 152, 0.19);
+        }
+    </style>
 </head>
-<body>
-  <b>Hello</b><p>
 
-  <img src="{{ image }}"><p>
-  Профиль интенсивности
-  <a href="{{url_for('upload')}} "><h1>Назад</h1> </a>
+<body>
+
+<a href="{{ url_for('index_forms') }}?back"><button class="button_back"><b>Назад</b></button></a>
+<!--<p>
+    Выделите <b id='choose'> область I<sub>0</sub></b>
+</p>
+<p>
+    <div class="formula">   I<sub>1</sub> / I<sub>0</sub> = <b id="IdI0"> </b> </div>
+</p>-->
+<p>
+
+    <!--<canvas id="overlay" style="position:absolute;pointer-events:none;"></canvas> -->
+<div style="height: 70%">
+    <canvas id="myChart" ></canvas>
+</div>
+
+<p>
+
+
+<table class="table">
+Результат:
+  <thead>
+    <tr>
+      <th scope="col">Образец</th>
+      <th scope="col">Отношение интенсивности левого канала к правому</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for samplename, answer in I1_I0.items() %}
+        <tr>
+           <td> {{ samplename }} </td>
+           <td> <b>{{ answer }}</b></td>
+        </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+
+</p>
+
+<p></p>
 </body>
-</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
+
+
+    <script>
+
+
+var frst = 0;
+
+colors = ['rgb(18,203,28)', 'rgb(243,150,10)', 'rgb(202,52,5)', 'rgb(203,18,151)', 'rgb(14,118,231)',
+    'rgb(14,231,170)','rgb(255,229,94)','rgb(236,106,167)']
+
+var opts = {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+        labels: {{X}},
+        datasets: [
+            {% for label, intensity in Y.items() %}
+                {
+                    label: '{{ label }}',
+                    borderColor: colors[{{loop.index-1 }}],
+                    backgroundColor: colors[{{loop.index-1 }}],
+                    pointRadius: 1,
+                    data: {{ intensity }},
+                    fill: false
+                },
+            {% endfor %}
+        ],
+    },
+
+    options: {
+        aspectRatio: 2.2,
+        title: {
+                display: false,
+                text: 'Image Intensity Profile'
+        },
+        layout: {
+            padding: {
+                            left: 0,
+                            right: 0,
+                            top: 20,
+                            bottom: 20,
+            }
+        },
+        scales: {
+            xAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Положение пикселя'
+                },
+                ticks: {
+                    maxTicksLimit: 24,
+                }
+            }],
+
+            yAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Интенсивность пикселя',
+                    fontSize: 24,
+                }
+            }]
+        },
+
+    }
+
+
+}
+
+if (document.body.clientWidth<768) {
+    opts.options.scales.yAxes[0].scaleLabel.display = false;
+    opts.options.layout.padding.left = 5;
+    opts.options.layout.padding.right = 15;
+    opts.options.aspectRatio = 1;
+
+    $('.hide_it').hide();
+}
+
+var canvas = document.getElementById('myChart')
+var ctx = canvas.getContext('2d');
+var chart = new Chart(ctx, opts);
+
+</script>
+
+{% endblock %}
