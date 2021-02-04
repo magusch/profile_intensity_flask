@@ -52,7 +52,7 @@
 
 <body>
 
-<a href="{{ url_for('index_forms') }}?back"><button class="button_back"><b>Назад</b></button></a>
+<a href="{{ url_for('index_forms') }}?back"><button class="button_back btn-primary btn-lg button_submit"><b>Назад</b></button></a>
 <!--<p>
     Выделите <b id='choose'> область I<sub>0</sub></b>
 </p>
@@ -68,13 +68,14 @@
 
 <p>
 
+<div style="margin-left: 10%;margin-right: 10%;">
+<table class="table" >
 
-<table class="table">
-Результат:
   <thead>
     <tr>
-      <th scope="col">Образец</th>
-      <th scope="col">Отношение интенсивности левого канала к правому</th>
+        <th scope="col">Образец</th>
+        <th scope="col">Канал 2 / Канал 1</th>
+        <th scope="col">Результат</th>
     </tr>
   </thead>
   <tbody>
@@ -82,12 +83,19 @@
         <tr>
            <td> {{ samplename }} </td>
            <td> <b>{{ answer }}</b></td>
+            <td>
+                {% if answer>1.3 %}
+                    ✅
+                {% else %}
+                    ❌
+                {% endif %}
+                </b></td>
         </tr>
     {% endfor %}
 
   </tbody>
 </table>
-
+</div>
 
 </p>
 
@@ -100,6 +108,8 @@
 
 
 var frst = 0;
+
+var font_size = 24;
 
 colors = ['rgb(18,203,28)', 'rgb(243,150,10)', 'rgb(202,52,5)', 'rgb(203,18,151)', 'rgb(14,118,231)',
     'rgb(14,231,170)','rgb(255,229,94)','rgb(236,106,167)']
@@ -139,15 +149,20 @@ var opts = {
                             bottom: 20,
             }
         },
+        legend: {
+            align: "start"
+        },
         scales: {
             xAxes: [{
                 display: true,
                 scaleLabel: {
                     display: true,
-                    labelString: 'Положение пикселя'
+                    labelString: 'Положение пикселя',
+                    fontSize: font_size,
                 },
                 ticks: {
-                    maxTicksLimit: 24,
+                    maxTicksLimit: 18,
+                    fontSize: font_size,
                 }
             }],
 
@@ -156,7 +171,11 @@ var opts = {
                 scaleLabel: {
                     display: true,
                     labelString: 'Интенсивность пикселя',
-                    fontSize: 24,
+                    fontSize: font_size,
+                },
+                ticks: {
+                    maxTicksLimit: 24,
+                    fontSize: font_size,
                 }
             }]
         },

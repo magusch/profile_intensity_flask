@@ -91,7 +91,6 @@ def completed():
             file = data['filename']
             Y, I1_I0[samplename] = line_intensity(file)
             intensities[samplename] = list(Y)
-
             #pixels[samplename] \
             X = (list(range(len(Y))))
 
@@ -101,6 +100,9 @@ def completed():
     else:
         return redirect (url_for('index_forms'))
 
+@app.route('/description', methods=['GET', 'POST'])
+def description():
+    return render_template('description.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
