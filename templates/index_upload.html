@@ -91,19 +91,44 @@
             <div class="hid_but_{{ loop.index }}" style="display: none; margin-bottom: 10px;">
              <button type="button" class="btn btn-outline-secondary">Добавить образец</button>
             </div>
+            <div class="del_but_{{ loop.index }}" style="display: none; margin-bottom: 10px;">
+             <button type="button" class="btn btn-outline-secondary">Удалить образец</button>
+            </div>
          </div>
         <script>
             $('#fake_button{{ loop.index }}').click(function(){
                 $('.hid_but_{{ loop.index }}').fadeIn();
+                $('.del_but_{{ loop.index + 1 }}').fadeIn();
                 $( "label.btn.{{ loop.index }}" ).html('Файл {{ loop.index }} добавлен');
-        });
+            });
+
             $('#name_{{ loop.index }}').click(function(){
                 $( "input.str_field.{{ loop.index }}" ).val('');
-        });
+            });
+
             $('.hid_but_{{ loop.index }}').click(function(){
-             $('.hid_obj_{{ loop.index + 1 }}').fadeIn();
-             $('.hid_but_{{ loop.index }}').fadeOut();
-        });
+                var filename = document.getElementById('upl {{ loop.index }}').files[0]['name']
+                if (filename.length>13) {
+                    filename = filename.slice(0, 5) + '...' + filename.slice(-8)
+                }
+                $( "label.btn.{{ loop.index }}" ).html(filename);
+
+                $('.hid_obj_{{ loop.index + 1 }}').fadeIn();
+                $('.del_but_{{ loop.index + 1  }}').fadeIn();
+                $('.del_but_{{ loop.index  }}').fadeOut();
+                $('.hid_but_{{ loop.index }}').fadeOut();
+            });
+
+            var control = $("#upl {{ loop.index }}");
+
+            $('.del_but_{{ loop.index }}').click(function(){
+                control.replaceWith( control.val('').clone( true ) );
+
+                 $('.hid_obj_{{ loop.index  }}').fadeOut();
+                 $('.del_but_{{ loop.index  }}').fadeOut();
+                 $('.del_but_{{ loop.index - 1 }}').fadeIn();
+                 $('.hid_but_{{ loop.index - 1 }}').fadeIn();
+            });
         </script>
 
      {% endfor %}
