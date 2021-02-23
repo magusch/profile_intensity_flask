@@ -53,10 +53,13 @@
 <nav class="navbar navbar-expand-lg navbar-dark header ">
     <ul class="navbar-nav col-sm">
       <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('index_forms') }}">Главная</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" href="{{ url_for('description') }}">Описание</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Инструкция</a>
+        <a class="nav-link" href="{{ url_for('instruction') }}">Инструкция</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">О Разработчиках</a>

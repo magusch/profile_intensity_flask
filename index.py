@@ -104,5 +104,9 @@ def completed():
 def description():
     return render_template('description.html')
 
+@app.route('/instruction', methods=['GET', 'POST'])
+def instruction():
+    return render_template('instruction.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
