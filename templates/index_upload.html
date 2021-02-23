@@ -81,6 +81,14 @@
 <div class="show_it" style="display: none;">
 <p>
     <form action="" method="post" class="form" enctype="multipart/form-data">
+        <div class="form-group col-6 col-sm-6 offset-3 offset-md-3">
+            <label for="floatingSelect">Выбрать люминофор</label>
+            <select class="form-control" id="floatingSelect" aria-label="Default select example">
+              <option value="lmnl" selected>Люминол</option>
+              <option value="lcgnn">Люцигенин</option>
+            </select>
+        </div>
+
      {% for form in forms %}
         {{ form.hidden_tag() }}
 
